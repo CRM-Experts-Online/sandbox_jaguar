@@ -1,0 +1,139 @@
+# .github/workflows/on-pr-merge.yml
+name: On PR Merge — Test & Upload to NetSuite
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------- Unit tests + coverage (no NetSuite connection needed) ----------
+  test:
+    if: >-
+      github.event.pull_request.merged == true &&
+      contains(fromJSON('["main","master"]'), github.event.pull_request.base.ref)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      # Install ALL deps including devDependencies. Do NOT set NODE_ENV=production
+      # or pass --omit=dev here, or @oracle/suitecloud-unit-testing won't install.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify unit-testing package is present
+        run: |
+          if [ ! -d node_modules/@oracle/suitecloud-unit-testing ]; then
+            echo "::error::@oracle/suitecloud-unit-testing not installed — check it's a devDependency and NODE_ENV isn't 'production'."
+            exit 1
+          fi
+
+      # Coverage is enabled in jest.config.js (informational — no threshold gate).
+      - name: Run Jest unit tests with coverage
+        run: npm test
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: ignore
+
+  # ---------- Upload to NetSuite (only if tests pass) ----------
+  upload-netsuite:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: sandbox
+
+    # SuiteCloud CLI in CI needs BOTH of these set for M2M auth to be allowed.
+    # SUITECLOUD_CI_PASSKEY MUST be non-empty and match the passkey used to
+    # create the credentials in account:setup:ci below.
+    env:
+      SUITECLOUD_CI: "1"
+      SUITECLOUD_CI_PASSKEY: ${{ secrets.SUITECLOUD_CI_PASSKEY }}
+
+    steps:
+      # fetch-depth: 0 gives full history so the changed-files diff below works.
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # Fail fast with a clear message if the passkey secret is missing/empty.
+      # An empty passkey is why the CLI reports only "SUITECLOUD_CI" is set.
+      - name: Verify CI env vars are set
+        run: |
+          if [ -z "$SUITECLOUD_CI_PASSKEY" ]; then
+            echo "::error::SUITECLOUD_CI_PASSKEY secret is empty or missing. Add it in repo Settings → Secrets and variables → Actions, using the SAME passkey you used for account:setup:ci."
+            exit 1
+          fi
+          echo "Passkey is set (length: ${#SUITECLOUD_CI_PASSKEY})."
+
+      # SuiteCloud CLI requires a JDK to be present on the runner.
+      - name: Set up Java (JDK 17)
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      # --acceptSuiteCloudSDKLicense skips the interactive license prompt in CI.
+      - name: Install SuiteCloud CLI
+        run: npm install -g --acceptSuiteCloudSDKLicense @oracle/suitecloud-cli
+
+      # The private key is stored base64-encoded in a secret so newlines survive.
+      - name: Restore NetSuite private key
+        env:
+          NS_PRIVATE_KEY_B64: ${{ secrets.NS_PRIVATE_KEY_B64 }}
+        run: |
+          echo "$NS_PRIVATE_KEY_B64" | base64 --decode > "$RUNNER_TEMP/ns-private.pem"
+          chmod 600 "$RUNNER_TEMP/ns-private.pem"
+
+      # M2M / OAuth 2.0 auth. --authid must match DefaultAuthID in project.json.
+      # Encrypts the credentials file using SUITECLOUD_CI_PASSKEY (set at job level).
+      - name: Authenticate to NetSuite (M2M)
+        env:
+          NS_ACCOUNT_ID:     ${{ secrets.NS_ACCOUNT_ID }}
+          NS_AUTH_ID:        ${{ secrets.NS_AUTH_ID }}
+          NS_CERTIFICATE_ID: ${{ secrets.NS_CERTIFICATE_ID }}
+        run: |
+          suitecloud account:setup:ci \
+            --account "$NS_ACCOUNT_ID" \
+            --authid "$NS_AUTH_ID" \
+            --certificateid "$NS_CERTIFICATE_ID" \
+            --privatekeypath "$RUNNER_TEMP/ns-private.pem"
+
+      # Upload only the File Cabinet files changed in this PR.
+      # Paths are File Cabinet paths (rooted at src/FileCabinet), not disk paths.
+      - name: Upload changed files to NetSuite
+        run: |
+          CHANGED=$(git diff --name-only \
+            "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}" \
+            | grep '^src/FileCabinet/' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "No File Cabinet files changed; nothing to upload."
+            exit 0
+          fi
+
+          PATHS=$(echo "$CHANGED" | sed 's#^src/FileCabinet##')
+          echo "Uploading:"; echo "$PATHS"
+          echo "$PATHS" | xargs suitecloud file:upload --paths
+
+      - name: Clean up key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/ns-private.pem"
