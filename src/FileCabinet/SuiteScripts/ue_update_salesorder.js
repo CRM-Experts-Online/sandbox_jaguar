@@ -743,6 +743,10 @@ define(['N/record', 'N/search', 'N/ui/serverWidget'],
               
 
                 var soId = recObj.getValue('custbody_linked_transaction');
+				
+				if(!soId && recObj.type == 'invoice'){
+					soId = recObj.getValue('createdfrom');
+				}
 
               if(recObj.type == 'salesorder' && scriptContext.type == 'create' ){
 
