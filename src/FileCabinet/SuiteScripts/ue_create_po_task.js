@@ -6,12 +6,12 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
     function (record, log, search, email, runtime) {
         function afterSubmit(context) {
 			var scriptObj = runtime.getCurrentScript();
-			var localGroup = scriptObj.getParameter({name:'custscript_local_ass_group'}));
-			var localRole = scriptObj.getParameter({name:'custscript_local_ass_role'}));
-			var nationalGroup = scriptObj.getParameter({name:'custscript_national_ass_group'}));
-			var nationalRole = scriptObj.getParameter({name:'custscript_national_ass_role'}));
-			var apRole = scriptObj.getParameter({name:'custscript_ap_role'}));
-			var apGroup = scriptObj.getParameter({name:'custscript_ap_group'}));
+			var localGroup = scriptObj.getParameter({name:'custscript_local_ass_group'});
+			var localRole = scriptObj.getParameter({name:'custscript_local_ass_role'});
+			var nationalGroup = scriptObj.getParameter({name:'custscript_national_ass_group'});
+			var nationalRole = scriptObj.getParameter({name:'custscript_national_ass_role'});
+			var apRole = scriptObj.getParameter({name:'custscript_ap_role'});
+			var apGroup = scriptObj.getParameter({name:'custscript_ap_group'});
             try {
 
                 var newRecord = context.newRecord;
