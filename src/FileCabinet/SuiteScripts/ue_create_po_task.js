@@ -2,9 +2,16 @@
  * @NApiVersion 2.1
  * @NScriptType UserEventScript
  */
-define(['N/record', 'N/log', 'N/search', 'N/email'],
-    function (record, log, search, email) {
+define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
+    function (record, log, search, email, runtime) {
         function afterSubmit(context) {
+			var scriptObj = runtime.getCurrentScript();
+			var localGroup = scriptObj.getParameter({name:'custscript_local_ass_group'}));
+			var localRole = scriptObj.getParameter({name:'custscript_local_ass_role'}));
+			var nationalGroup = scriptObj.getParameter({name:'custscript_national_ass_group'}));
+			var nationalRole = scriptObj.getParameter({name:'custscript_national_ass_role'}));
+			var apRole = scriptObj.getParameter({name:'custscript_ap_role'}));
+			var apGroup = scriptObj.getParameter({name:'custscript_ap_group'}));
             try {
 
                 var newRecord = context.newRecord;
@@ -30,8 +37,8 @@ define(['N/record', 'N/log', 'N/search', 'N/email'],
                         taskRec.setValue('company', newRecord.getValue('entity'));
                         taskRec.setValue('transaction', newRecord.id);
 
-                        taskRec.setValue('custevent_assigned_group', 25924);
-                        taskRec.setValue('custevent_assigned_role', 1365);
+                        taskRec.setValue('custevent_assigned_group', localGroup);
+                        taskRec.setValue('custevent_assigned_role', localRole);
 
 
                         var taskId = taskRec.save();
@@ -42,7 +49,7 @@ define(['N/record', 'N/log', 'N/search', 'N/email'],
                     if (context.type == 'edit' && newRecord.getValue('class') == 1) {
 
                         var newVal = newRecord.getValue('custbody_so_ready_to_dispatch');
-                        var oldVal = newRecord.getValue('custbody_so_ready_to_dispatch');
+                        var oldVal = oldRecord.getValue('custbody_so_ready_to_dispatch');
                         if (newVal && newVal != oldVal) {
                             var taskRec = record.create({
                                 type: 'task'
@@ -53,8 +60,8 @@ define(['N/record', 'N/log', 'N/search', 'N/email'],
                             taskRec.setValue('transaction', newRecord.id);
 
 
-                            taskRec.setValue('custevent_assigned_group', 25924);
-                            taskRec.setValue('custevent_assigned_role', 1365);
+                            taskRec.setValue('custevent_assigned_group', localGroup);
+                            taskRec.setValue('custevent_assigned_role', localRole);
 
                             var taskId = taskRec.save();
                             log.debug('taskId', taskId);
@@ -102,8 +109,8 @@ define(['N/record', 'N/log', 'N/search', 'N/email'],
 
                         // Changed from National Dispatch to Order Entry
                         // Order Entry role instead of National Dispatch
-                        taskRec.setValue('custevent_assigned_group', 25892); // Keeping the same group
-                        taskRec.setValue('custevent_assigned_role', 1390); // Changed to Order Entry role ID
+                        taskRec.setValue('custevent_assigned_group', nationalGroup); // Keeping the same group
+                        taskRec.setValue('custevent_assigned_role', nationalRole); // Changed to Order Entry role ID
 
                         var taskId = taskRec.save();
                         log.debug('taskId', taskId);
@@ -171,12 +178,12 @@ define(['N/record', 'N/log', 'N/search', 'N/email'],
 
                         task.setValue({
                             fieldId: 'custevent_assigned_role',
-                            value: 1382
+                            value: apRole
                         });
 
                         task.setValue({
                             fieldId: 'custevent_assigned_group',
-                            value: 25925
+                            value: apGroup
                         });
 
                         log.debug('createdFrom', createdFrom);
@@ -267,8 +274,8 @@ define(['N/record', 'N/log', 'N/search', 'N/email'],
                             taskRec.setValue('company', vendorId);
                             //taskRec.setValue('transaction', getDeatils.soId);
                             // taskRec.setValue('assigned', 9101);
-                            taskRec.setValue('custevent_assigned_role', 1379);
-                            taskRec.setValue('custevent_assigned_group', 25926);
+                            taskRec.setValue('custevent_assigned_role', custscript_ap_role);
+                            taskRec.setValue('custevent_assigned_group', custscript_ap_group);
                             taskRec.setText('priority', 'High');
                             taskRec.setValue({
                                 fieldId: 'transaction',
