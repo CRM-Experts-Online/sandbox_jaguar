@@ -585,7 +585,7 @@ define(['N/record', 'N/search', 'N/ui/serverWidget'],
 
                         log.debug('cSlist', cSlist);
 
-                        if (cSlist && cSlist > 0) {
+                        if (cSlist && cSlist > 0 && sList == 0) {
 
                             for (var y = 0; y < cSlist; y++) {
 
