@@ -47,9 +47,9 @@ define(['N/record', 'N/search', 'N/runtime', 'N/task'],
 
             try {
 				
-				log.debug('context.type', context.type);
+				log.debug('scriptContext.type', scriptContext.type);
 				
-				if (context.type != 'edit'){return}
+				if (scriptContext.type != 'edit'){return}
 
                 var recObj = scriptContext.newRecord;
 
