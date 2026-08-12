@@ -46,6 +46,10 @@ define(['N/record', 'N/search', 'N/runtime', 'N/task'],
         function beforeSubmit(scriptContext) {
 
             try {
+				
+				log.debug('scriptContext.type', scriptContext.type);
+				
+				if (scriptContext.type != 'edit'){return}
 
                 var recObj = scriptContext.newRecord;
 
@@ -136,6 +140,8 @@ define(['N/record', 'N/search', 'N/runtime', 'N/task'],
 				if(secondarySalesrep){
 									recObj.setValue('custentity_secondary_salesrep', secondarySalesrep);
 				}
+				
+				log.debug('salesrepChanges', salesrepChanges);
 				
 
                 if (salesrepChanges == true) {
@@ -249,6 +255,8 @@ define(['N/record', 'N/search', 'N/runtime', 'N/task'],
                         } else {
 
                             //call map/reduce
+							
+							log.debug('trigger-mapreduce');
 
                             var scriptObj = runtime.getCurrentScript();
 
