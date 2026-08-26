@@ -302,7 +302,7 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
 
                     }
                 }
-                if (newRecord.type == 'invoice') {
+               /* if (newRecord.type == 'invoice') {
                     var app1 = newRecord.getValue('custbody_custom_approval_status');
 
                     var app2 = newRecord.getValue('custbody_secondary_approval_status');
@@ -389,7 +389,7 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
                         log.debug('Invoice Rejection Task', 'Task creation for rejected invoice has been commented out');
 
                     }
-                }
+                }*/
 
             } catch (er) {
                 log.debug('ERROR', er.toString());
