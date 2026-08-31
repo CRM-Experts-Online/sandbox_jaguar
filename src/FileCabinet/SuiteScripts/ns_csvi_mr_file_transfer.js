@@ -43,7 +43,7 @@ define(['N/error', 'N/record', 'N/search', 'N/file', 'N/runtime', 'N/email', 'N/
 					details: 'Start -->'
 				});
 				
-				var input = {};
+				var input = [];
 				var scriptObj = runtime.getCurrentScript();
 				var configFileId = scriptObj.getParameter({name: 'custscript_csvi_folder_mapping_id'});
 				log.debug('configFileId', configFileId);
@@ -163,7 +163,7 @@ define(['N/error', 'N/record', 'N/search', 'N/file', 'N/runtime', 'N/email', 'N/
 					log.debug('List input', JSON.stringify(input));
 				}
 				else{
-					input[j] = objSftpConfigParams;
+					input[input.length] = objSftpConfigParams;
 					log.debug('No List input', JSON.stringify(input));
 				}
 				return input;
