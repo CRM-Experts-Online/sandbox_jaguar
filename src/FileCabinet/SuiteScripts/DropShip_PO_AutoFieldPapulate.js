@@ -55,6 +55,8 @@ define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect','N/runtime'],
             try {
                 log.debug('Context Type', context.type);
                 if (context.type !== context.UserEventType.VIEW) return;
+				
+				var scriptObj = runtime.getCurrentScript();
 
                 const newRecord = context.newRecord;
                 const recordId = newRecord.id;
@@ -148,7 +150,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect','N/runtime'],
                         values: {
                             custbody_secondary_sales_rep: secondarySalesRep,
                             trandate: soDate,
-                          custbody_linked_transaction:sourceId
+                          custbody_linked_transaction:SOValues.sourceId
                         },
                         options: {
                             enableSourcing: true,
