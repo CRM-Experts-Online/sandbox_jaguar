@@ -8,7 +8,7 @@ define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime'],
      * @param {record} record
      * @param {search} search
      */
-    function(record, search, ui) {
+    function(record, search, ui, runtime) {
 
         /**
          * Function definition to be triggered before record is loaded.
