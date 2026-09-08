@@ -268,14 +268,14 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
                             var taskRec = record.create({
                                 type: 'task'
                             });
-                            taskRec.setValue('title', 'Create Invoice for' + soId);
+                           // taskRec.setValue('title', 'Create Invoice for' + soId);
                             taskRec.setValue('title', `${soId} – Create an Invoice for Sales Order – ${createdDate}`);
                             taskRec.setValue('message', 'A bill has been created. Please create the invoice for the following sales order:' + soId);
                             taskRec.setValue('company', vendorId);
                             //taskRec.setValue('transaction', getDeatils.soId);
                             // taskRec.setValue('assigned', 9101);
-                            taskRec.setValue('custevent_assigned_role', custscript_ap_role);
-                            taskRec.setValue('custevent_assigned_group', custscript_ap_group);
+                            taskRec.setValue('custevent_assigned_role', apRole);
+                            taskRec.setValue('custevent_assigned_group', apGroup);
                             taskRec.setText('priority', 'High');
                             taskRec.setValue({
                                 fieldId: 'transaction',
@@ -302,7 +302,7 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
 
                     }
                 }
-                if (newRecord.type == 'invoice') {
+               /* if (newRecord.type == 'invoice') {
                     var app1 = newRecord.getValue('custbody_custom_approval_status');
 
                     var app2 = newRecord.getValue('custbody_secondary_approval_status');
@@ -389,7 +389,7 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
                         log.debug('Invoice Rejection Task', 'Task creation for rejected invoice has been commented out');
 
                     }
-                }
+                }*/
 
             } catch (er) {
                 log.debug('ERROR', er.toString());
