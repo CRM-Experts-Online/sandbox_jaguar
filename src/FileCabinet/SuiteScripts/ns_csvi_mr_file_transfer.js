@@ -858,7 +858,7 @@ define(['N/error', 'N/record', 'N/search', 'N/file', 'N/runtime', 'N/email', 'N/
                         objRow.keyId = '';
 
                         // Column
-                        for (i in objSrch.columns) {
+                        for (var i in objSrch.columns) {
 
                             var objCol = objSrch.columns[i];
                             objRow[objCol.name] = result.getValue(objCol);
