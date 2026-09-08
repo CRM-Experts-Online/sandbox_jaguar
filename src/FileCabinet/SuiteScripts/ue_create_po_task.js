@@ -274,8 +274,8 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
                             taskRec.setValue('company', vendorId);
                             //taskRec.setValue('transaction', getDeatils.soId);
                             // taskRec.setValue('assigned', 9101);
-                            taskRec.setValue('custevent_assigned_role', nationalRole);
-                            taskRec.setValue('custevent_assigned_group', nationalGroup);
+                            taskRec.setValue('custevent_assigned_role', apRole);
+                            taskRec.setValue('custevent_assigned_group', apGroup);
                             taskRec.setText('priority', 'High');
                             taskRec.setValue({
                                 fieldId: 'transaction',
