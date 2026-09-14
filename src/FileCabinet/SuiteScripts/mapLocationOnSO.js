@@ -2,7 +2,7 @@
  *@NApiVersion 2.1
  *@NScriptType UserEventScript
  */
-define(['N/record', 'N/log'], (record, log) => {
+define(['N/record', 'N/log','./errorLogger'], (record, log,errorLogger) => {
 
     const afterSubmit = (context) => {
         try {
@@ -53,6 +53,15 @@ define(['N/record', 'N/log'], (record, log) => {
             log.error({
                 title: 'Error in afterSubmit function',
                 details: error.message
+            });
+			
+			  errorLogger.logError({
+                error: error,
+                title: 'Map Location On SalesOrder',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
             });
         }
     };

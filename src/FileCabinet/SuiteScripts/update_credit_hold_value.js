@@ -5,7 +5,7 @@
  * Purpose: Set Credit Hold = Off on new customer
  */
 
-define(['N/record', 'N/log'], (record, log) => {
+define(['N/record', 'N/log','./errorLogger'], (record, log, errorLogger) => {
 
     const afterSubmit = (context) => {
         try {
@@ -34,6 +34,16 @@ define(['N/record', 'N/log'], (record, log) => {
 
         } catch (e) {
             log.error('Error in afterSubmit', e);
+			
+			errorLogger.logError({
+                error: e,
+                title: 'update Credit Hold Value',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
+
         }
     };
 

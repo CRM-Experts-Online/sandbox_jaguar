@@ -2,7 +2,7 @@
  * @NApiVersion 2.x
  * @NScriptType UserEventScript
  */
-define(['N/record', 'N/log', 'N/search'], function (record, log, search) {
+define(['N/record', 'N/log', 'N/search', './errorLogger'], function (record, log, search, errorLogger) {
 
   function afterSubmit(context) {
     try {
@@ -94,6 +94,15 @@ define(['N/record', 'N/log', 'N/search'], function (record, log, search) {
 
     } catch (e) {
         log.error('Error in afterSubmit', e);
+		
+		errorLogger.logError({
+                error: e,
+                title: 'Update ShipTo ON PO',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
     }
 }
 

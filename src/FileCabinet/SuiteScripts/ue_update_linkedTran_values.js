@@ -2,8 +2,8 @@
  * @NApiVersion 2.1
  * @NScriptType UserEventScript
  */
-define(['N/record', 'N/log', 'N/search', 'N/email', 'N/runtime'],
-        function(record, log, search, email, runtime) {
+define(['N/record', 'N/log', 'N/search', 'N/email', 'N/runtime', './errorLogger'],
+        function(record, log, search, email, runtime, errorLogger) {
             function afterSubmit(context) {
                 try {
 
@@ -102,6 +102,15 @@ define(['N/record', 'N/log', 'N/search', 'N/email', 'N/runtime'],
 				} 
 				}catch(er) {
                         log.error('ERROR', er.toString());
+						
+						errorLogger.logError({
+                error: er,
+                title: 'UE Update Linked Transaction Fields',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
                     }
                 }
 
