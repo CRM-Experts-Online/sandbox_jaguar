@@ -2,7 +2,7 @@
  *@NApiVersion 2.1
  *@NScriptType UserEventScript
  */
-define(['N/record', 'N/ui/serverWidget', 'N/search'], function(record, ui, search) {
+define(['N/record', 'N/ui/serverWidget', 'N/search','./errorLogger'], function(record, ui, search,errorLogger) {
 
   function beforeLoad(scriptContext) {
 			
@@ -60,7 +60,10 @@ if(scriptContext.type == 'edit'){
         }
 
     function afterSubmit(context) {
-        log.debug({
+		
+		try{
+			
+			 log.debug({
             title: 'context',
             details: context
         });
@@ -91,6 +94,20 @@ if(scriptContext.type == 'edit'){
         else{
             return;
         }
+			
+		}catch(e){
+			log.error('ERROR', e.toString);
+			errorLogger.logError({
+                error: e,
+                title: 'Update SO Status',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
+
+		}
+       
 
         
     }

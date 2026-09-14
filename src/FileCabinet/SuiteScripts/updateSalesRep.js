@@ -2,7 +2,7 @@
  *@NApiVersion 2.x
  *@NScriptType UserEventScript
  */
-define(['N/record'], function (record) {
+define(['N/record', './errorLogger'], function (record, errorLogger) {
 
    function beforeLoad(context) {
     
@@ -105,6 +105,15 @@ define(['N/record'], function (record) {
             log.error({
                 title: "Error in beforeSubmit",
                 details: e
+            });
+			
+			errorLogger.logError({
+                error: e,
+                title: 'Update SalesRep',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
             });
         }
     }

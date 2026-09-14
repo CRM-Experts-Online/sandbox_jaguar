@@ -3,12 +3,12 @@
  * @NScriptType UserEventScript
  * @NModuleScope SameAccount
  */
-define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime'],
+define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime','./errorLogger'],
     /**
      * @param {record} record
      * @param {search} search
      */
-    function(record, search, ui, runtime) {
+    function(record, search, ui, runtime, errorLogger) {
 
         /**
          * Function definition to be triggered before record is loaded.
@@ -720,6 +720,15 @@ define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime'],
                     } catch (er) {
 
                         log.error('error', er.toString());
+						
+						 errorLogger.logError({
+                error: er,
+                title: 'update sales order script',
+                functionName: 'beforeSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
                     }
                 }
 
@@ -943,6 +952,16 @@ define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime'],
 
             } catch (er) {
                 log.error('ERROR', er.toString());
+				
+				 errorLogger.logError({
+                error: er,
+                title: 'update sales order script',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
+				
             }
 
         }
