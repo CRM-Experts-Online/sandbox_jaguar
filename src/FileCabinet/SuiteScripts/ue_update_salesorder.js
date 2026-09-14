@@ -3,12 +3,12 @@
  * @NScriptType UserEventScript
  * @NModuleScope SameAccount
  */
-define(['N/record', 'N/search', 'N/ui/serverWidget'],
+define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime'],
     /**
      * @param {record} record
      * @param {search} search
      */
-    function(record, search, ui) {
+    function(record, search, ui, runtime) {
 
         /**
          * Function definition to be triggered before record is loaded.
@@ -50,9 +50,11 @@ define(['N/record', 'N/search', 'N/ui/serverWidget'],
          * @Since 2015.2
          */
         function beforeSubmit(scriptContext) {
+			var scriptObj = runtime.getCurrentScript();
+
             var rec = scriptContext.newRecord;
             if (rec.type == 'invoice' || rec.type == 'creditmemo') {
-                updateDeinedCost(scriptContext);
+                updateDeinedCost(scriptContext, scriptObj);
             }
 
             if (rec.type == 'salesorder') {
@@ -946,7 +948,7 @@ define(['N/record', 'N/search', 'N/ui/serverWidget'],
         }
 
 
-        function updateDeinedCost(scriptContext) {
+        function updateDeinedCost(scriptContext, scriptObj) {
 
             try {
 
@@ -956,7 +958,7 @@ define(['N/record', 'N/search', 'N/ui/serverWidget'],
 
                 var rClass = rec.getValue('class');
 
-                if (rClass == 2) {
+                if (rClass ==  scriptObj.getParameter({name: 'custscript_update_so_class_national'})) {
 
                     getvendorBill(scriptContext);
                     return;

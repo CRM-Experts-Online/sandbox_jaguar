@@ -65,7 +65,7 @@ define(['N/record', 'N/search'],
          * @param {string} scriptContext.type - Trigger type
          * @Since 2015.2
          */
-        function afterSubmit(scriptContext) {
+       /* function afterSubmit(scriptContext) {
 
             try {
                 if (scriptContext.type != 'create') {
@@ -254,7 +254,7 @@ define(['N/record', 'N/search'],
 
 
 
-        }
+        }*/
 
         return {
              beforeLoad: beforeLoad,

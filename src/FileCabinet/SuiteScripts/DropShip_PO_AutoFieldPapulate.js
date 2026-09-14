@@ -11,17 +11,19 @@
    ------------------------------------------------------
 */
 
-define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect'],
+define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect','N/runtime'],
     (record, search, log, format, redirect) => {
 
         const populateSecondarySalesRep = (newRecord) => {
             var classValue = newRecord.getValue({ fieldId: 'class' });
             var secondarySalesRep;
+			
+			var scriptObj = runtime.getCurrentScript();
 
             var sourceId;
-            if (classValue == "1") { // Local
+            if (classValue == scriptObj.getParameter('custscript_po_class_local')) { // Local
                 sourceId = newRecord.getValue({ fieldId: 'custbody_linked_transaction' });
-            } else if (classValue == "2") { // National
+            } else if (classValue == scriptObj.getParameter('custscript_po_class_national')) { // National
                 sourceId = newRecord.getValue({ fieldId: 'createdfrom' });
             }
 
@@ -53,6 +55,8 @@ define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect'],
             try {
                 log.debug('Context Type', context.type);
                 if (context.type !== context.UserEventType.VIEW) return;
+				
+				var scriptObj = runtime.getCurrentScript();
 
                 const newRecord = context.newRecord;
                 const recordId = newRecord.id;
@@ -89,7 +93,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect'],
                     isDynamic: true
                 });
 
-                loadedRecord.setValue({ fieldId: 'customform', value: 258 });
+                loadedRecord.setValue({ fieldId: 'customform', value: scriptObj.getParameter('custscript_po_custom_form')});
                 loadedRecord.setValue({ fieldId: 'custbody1', value: soFields.custbody1 || '' });
                 loadedRecord.setValue({ fieldId: 'custbody_site_contact_number', value: soFields.custbody_site_contact_number || '' });
                 loadedRecord.setValue({ fieldId: 'custbody_site_code', value: soFields.custbody_site_code || '' });
@@ -146,7 +150,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect'],
                         values: {
                             custbody_secondary_sales_rep: secondarySalesRep,
                             trandate: soDate,
-                          custbody_linked_transaction:sourceId
+                          custbody_linked_transaction:SOValues.sourceId
                         },
                         options: {
                             enableSourcing: true,
