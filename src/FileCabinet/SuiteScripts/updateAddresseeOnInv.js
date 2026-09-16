@@ -2,7 +2,7 @@
  *@NApiVersion 2.1
  *@NScriptType UserEventScript
  */
-define(['N/record', 'N/search', 'N/log'], function(record, search, log) {
+define(['N/record', 'N/search', 'N/log', './errorLogger'], function(record, search, log, errorLogger) {
     
 
     function beforeSubmit(scriptContext) {
@@ -78,6 +78,15 @@ define(['N/record', 'N/search', 'N/log'], function(record, search, log) {
 
         } catch (er) {
             log.error('ERROR', er.toString());
+			
+			 errorLogger.logError({
+                error: er,
+                title: 'Update Addressee and Fields On Invoice',
+                functionName: 'beforeSubmit',
+                recordType: scriptContext.newRecord.type,
+                recordId: scriptContext.newRecord.id,
+                details: { eventType: scriptContext.type }
+            });
         }
     }
 
@@ -135,6 +144,15 @@ define(['N/record', 'N/search', 'N/log'], function(record, search, log) {
             }
         }} catch (error) {
             log.error("Error in afterSubmit", error.toString());
+			
+			errorLogger.logError({
+                error: error,
+                title: 'Update Addressee and Fields On Invoice',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
         }
     }
 

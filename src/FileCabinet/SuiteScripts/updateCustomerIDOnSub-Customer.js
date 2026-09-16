@@ -3,12 +3,12 @@
  * @NScriptType UserEventScript
  * @NModuleScope SameAccount
  */
-define(['N/record', 'N/search','N/ui/serverWidget', 'N/runtime'],
+define(['N/record', 'N/search','N/ui/serverWidget', 'N/runtime', './errorLogger'],
 /**
  * @param {record} record
  * @param {search} search
  */
-function(record, search,serverWidget,runtime) {
+function(record, search,serverWidget,runtime, errorLogger) {
    
     /**
      * Function definition to be triggered before record is loaded.
@@ -90,6 +90,15 @@ function(record, search,serverWidget,runtime) {
 			
 		}catch(er){
 			log.error('ERROR', er.toString());
+			
+			errorLogger.logError({
+                error: er,
+                title: 'Update CustId On Sub-Customer Record New',
+                functionName: 'beforeSubmit',
+                recordType: scriptContext.newRecord.type,
+                recordId: scriptContext.newRecord.id,
+                details: { eventType: scriptContext.type }
+            });
 		}
 		
 

@@ -3,12 +3,12 @@
  * @NScriptType UserEventScript
  * @NModuleScope SameAccount
  */
-define(['N/record', 'N/search'],
+define(['N/record', 'N/search', './errorLogger'],
     /**
      * @param {record} record
      * @param {search} search
      */
-    function(record, search) {
+    function(record, search, errorLogger) {
 
         /**
          * Function definition to be triggered before record is loaded.
@@ -92,6 +92,15 @@ define(['N/record', 'N/search'],
 
             } catch (er) {
                 log.error('ERROR', er.toString());
+				
+				 errorLogger.logError({
+                error: er,
+                title: 'UE Update IF PMP Records',
+                functionName: 'afterSubmit',
+                recordType: scriptContext.newRecord.type,
+                recordId: scriptContext.newRecord.id,
+                details: { eventType: scriptContext.type }
+            });
             }
 
         }

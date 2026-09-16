@@ -4,7 +4,7 @@
  * @NModuleScope SameAccount
  */
 
-define(['N/record', 'N/runtime', 'N/format'], (record, runtime, format) => {
+define(['N/record', 'N/runtime', 'N/format', './errorLogger'], (record, runtime, format, errorLogger) => {
 
     const afterSubmit = (context) => {
         // Run only when Vendor Bill is created
@@ -96,6 +96,15 @@ define(['N/record', 'N/runtime', 'N/format'], (record, runtime, format) => {
 
         } catch (e) {
             log.error('Error creating Task', e);
+			
+			errorLogger.logError({
+                error: e,
+                title: 'Create Task on Vendor Bill Creation',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
         }
     };
 

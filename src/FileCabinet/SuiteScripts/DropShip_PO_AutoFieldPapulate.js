@@ -11,8 +11,8 @@
    ------------------------------------------------------
 */
 
-define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect','N/runtime'],
-    (record, search, log, format, redirect) => {
+define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect','N/runtime', './errorLogger'],
+    (record, search, log, format, redirect, errorLogger) => {
 
         const populateSecondarySalesRep = (newRecord) => {
             var classValue = newRecord.getValue({ fieldId: 'class' });
@@ -161,6 +161,15 @@ define(['N/record', 'N/search', 'N/log', 'N/format', 'N/redirect','N/runtime'],
 
             } catch (e) {
                 log.error('AfterSubmit Error', e);
+				
+				errorLogger.logError({
+                error: e,
+                title: 'DropShip PO Auto Form Selection',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
             }
         };
 

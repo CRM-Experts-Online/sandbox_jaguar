@@ -2,8 +2,8 @@
  * @NApiVersion 2.1
  * @NScriptType UserEventScript
  */
-define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
-    function (record, log, search, email, runtime) {
+define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime', './errorLogger'],
+    function (record, log, search, email, runtime,errorLogger) {
         function afterSubmit(context) {
 			var scriptObj = runtime.getCurrentScript();
 			var localGroup = scriptObj.getParameter({name:'custscript_local_ass_group'});
@@ -392,7 +392,16 @@ define(['N/record', 'N/log', 'N/search', 'N/email','N/runtime'],
                 }*/
 
             } catch (er) {
-                log.debug('ERROR', er.toString());
+                log.error('ERROR', er.toString());
+				
+				 errorLogger.logError({
+                error: er,
+                title: 'Create Task',
+                functionName: 'afterSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
             }
         }
 

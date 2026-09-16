@@ -5,7 +5,7 @@
  * @description Sets a timestamp field with the current date/time before a record is saved
  * Works with both entity records (customer, vendor) and transaction records (sales order, invoice)
  */
-define(['N/log', 'N/runtime', 'N/record'], function(log, runtime, record) {
+define(['N/log', 'N/runtime', 'N/record','./errorLogger'], function(log, runtime, record,errorLogger) {
     
     /**
      * Function that runs before the record is saved
@@ -57,6 +57,15 @@ define(['N/log', 'N/runtime', 'N/record'], function(log, runtime, record) {
             
         } catch (e) {
             log.error('Error in beforeSubmit', e);
+			
+			errorLogger.logError({
+                error: e,
+                title: 'Error while updating timestamp',
+                functionName: 'beforeSubmit',
+                recordType: context.newRecord.type,
+                recordId: context.newRecord.id,
+                details: { eventType: context.type }
+            });
         }
     }
     
