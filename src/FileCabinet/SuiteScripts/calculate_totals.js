@@ -15,13 +15,13 @@ define(['N/error'], function(error) {
                 fieldId: 'location',
                 value: loc
             });
-          if(vendorH){
+        /* if(vendorH){
              currentRecord.setCurrentSublistValue({
                 sublistId: sublistName,
                 fieldId: 'povendor',
                 value: vendorH
             });
-          }
+          }*/
    
         }
     }
@@ -128,7 +128,7 @@ define(['N/error'], function(error) {
     
     return {       
       fieldChanged: fieldChanged,
-      lineInit: lineInit,
-       saveRecord: saveRecord 
+      lineInit: lineInit
+       //saveRecord: saveRecord 
     };
 }); 
