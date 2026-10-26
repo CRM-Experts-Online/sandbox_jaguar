@@ -230,14 +230,28 @@ define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime','./errorLogger']
                              })*/
 
                         }
+						
+						 if (customCostRate == 0.00000) {
 
-
-                        /*rec.setSublistValue({
+                            customCostRate = costRate;
+                             rec.setSublistValue({
+                                 sublistId: 'item',
+                                 fieldId: 'custcol2',
+                                 value: Number(costRate).toFixed(5),
+                                 line: x
+                             })
+							 
+							  rec.setSublistValue({
                             sublistId: 'item',
                             fieldId: 'custcol3',
-                            value: parseFloat(customCostRate) * qty,
+                            value: Number(parseFloat(customCostRate) * qty).toFixed(5),
                             line: x
-                        })*/
+                        })
+
+                        }
+
+
+                       
 
                         var grofit = (parseFloat(customCostRate) * qty);
 
@@ -692,8 +706,12 @@ define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime','./errorLogger']
                                 fieldId: 'custcol2',
                                 line: x
                             })
+							
+							log.debug('customCostRate', customCostRate);
 
-                            if (!customCostRate) {
+                            if (!customCostRate || customCostRate == 0.00000) {
+								
+								log.debug('costRate', costRate);
 
                                 customCostRate = costRate;
                                 rec.setSublistValue({
@@ -725,9 +743,9 @@ define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime','./errorLogger']
                 error: er,
                 title: 'update sales order script',
                 functionName: 'beforeSubmit',
-                recordType: context.newRecord.type,
-                recordId: context.newRecord.id,
-                details: { eventType: context.type }
+                recordType: scriptContext.newRecord.type,
+                recordId: scriptContext.newRecord.id,
+                details: { eventType: scriptContext.type }
             });
                     }
                 }
@@ -957,9 +975,9 @@ define(['N/record', 'N/search', 'N/ui/serverWidget','N/runtime','./errorLogger']
                 error: er,
                 title: 'update sales order script',
                 functionName: 'afterSubmit',
-                recordType: context.newRecord.type,
-                recordId: context.newRecord.id,
-                details: { eventType: context.type }
+                recordType: scriptContext.newRecord.type,
+                recordId: scriptContext.newRecord.id,
+                details: { eventType: scriptContext.type }
             });
 				
             }
